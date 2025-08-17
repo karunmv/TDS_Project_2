@@ -162,4 +162,4 @@ async def analyze_data(files: List[UploadFile] = File(...)):
 
 @app.get("/")
 def read_root():
-return {"message": "Data Analyst Agent API is active."}
+    return {"message": "Data Analyst Agent API is active."}
