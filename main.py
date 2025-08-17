@@ -89,7 +89,7 @@ async def analyze_data(files: List[UploadFile] = File(...)):
     This endpoint handles the incoming request with files.
     """
     if not files:
-    raise HTTPException(status_code=400, detail="No files were sent.")
+        raise HTTPException(status_code=400, detail="No files were sent.")
 
     # Create a unique temporary directory for this specific request
     session_id = str(uuid.uuid4())
