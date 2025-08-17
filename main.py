@@ -67,14 +67,14 @@ def execute_python_code(code: str, session_dir: str) -> str:
         # Change to the session directory so the script can find uploaded files
         os.chdir(session_dir)
         with redirect_stdout(output_buffer):
-        # IMPORTANT: In a real-world production app, this exec call MUST be sandboxed
-        # for security using Docker or a similar technology. For this project, it's okay.
-        exec(code, globals())
+            # IMPORTANT: In a real-world production app, this exec call MUST be sandboxed
+            # for security using Docker or a similar technology. For this project, it's okay.
+            exec(code, globals())
 
-        result = output_buffer.getvalue().strip()
-        if not result:
-            raise ValueError("The executed script produced no output. It must end with a print() statement.")
-        return result
+            result = output_buffer.getvalue().strip()
+            if not result:
+                raise ValueError("The executed script produced no output. It must end with a print() statement.")
+            return result
     except Exception as e:
         # Log the full error and return a JSON error message
         logging.error(f"Code execution failed: {e}\n{traceback.format_exc()}")
