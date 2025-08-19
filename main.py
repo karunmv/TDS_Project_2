@@ -127,8 +127,6 @@ result = [len(df), np.corrcoef(x, y)[0,1], plot_uri]
 print(json.dumps(result))
 """
 
-"""
-
 
 def execute_python_code(code: str, session_dir: str) -> str:
     """
