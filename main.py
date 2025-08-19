@@ -19,7 +19,13 @@ logging.basicConfig(level=logging.INFO)
 # IMPORTANT: Set your OpenAI API key as an environment variable.
 # For local testing, you can create a .env file or temporarily set it here like this:
 # os.environ["OPENAI_API_KEY"] = "sk-YourSecretKeyGoesHere"
-client = OpenAI()
+client = OpenAI(
+    # The key is read from the environment variable you set on Render
+    api_key=os.environ.get("OPENAI_API_KEY"), 
+
+    # This tells the client to send requests to AIPipe instead of OpenAI
+    base_url="https://aipipe.org/openai/v1" # <-- IMPORTANT: Replace with your actual AIPipe URL!
+)
 app = FastAPI()
 
 # Create a directory to temporarily store files for each request

@@ -1,0 +1,8 @@
+Scrape the list of highest grossing films from Wikipedia. It is at the URL:
+https://en.wikipedia.org/wiki/List_of_highest-grossing_films
+
+Answer the following questions and respond with a JSON array containing the answer. The final output must be just the array.
+1. How many $2 bn movies were released before 2000? Return as an integer.
+2. Which is the earliest film that grossed over $1.5 bn? Return as a string.
+3. What's the Pearson correlation coefficient between the Rank and Peak columns? Return as a float.
+4. Draw a scatterplot of Rank vs. Peak with a dotted red regression line. Return as a base-64 encoded data URI under 100,000 bytes.
