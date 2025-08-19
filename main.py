@@ -58,10 +58,13 @@ Your script must follow these rules:
    - If a required column is missing, gracefully return JSON with `{"error": "...", "columns": [...]}` instead of crashing.  
 
 4. **Data Types**  
-   - Separate numeric and categorical columns using `df.select_dtypes()`.  
-   - NEVER cast entire dataframes to float.  
-   - If regression/ML is required, encode categorical variables with `pd.get_dummies(drop_first=True)`.  
-   - Handle missing values with `.dropna()` or `.fillna()` appropriately.  
+   - NEVER cast entire dataframes or string columns to float.  
+   - Before numeric operations (correlation, regression, etc.), explicitly select only numeric columns using:  
+     `df.select_dtypes(include=["number"])`  
+   - If the required column is not numeric but represents numeric values as strings (e.g., "$2,548,000"), clean it with regex and `pd.to_numeric(errors="coerce")`.  
+   - If a column is categorical (like case numbers, IDs, titles), never attempt numeric analysis on it. Use it only for grouping, filtering, or counts.  
+   - Always drop or impute NaN before fitting/scoring models.  
+
 
 5. **Analysis**  
    - Only perform the operations required to answer the questions in `questions.txt`.  
@@ -136,17 +139,20 @@ def execute_python_code(code: str, session_dir: str) -> str:
     output_buffer = io.StringIO()
     original_cwd = os.getcwd()
     try:
-        # Change to the session directory so the script can find uploaded files
-        os.chdir(session_dir)
-        with redirect_stdout(output_buffer):
-            # IMPORTANT: In a real-world production app, this exec call MUST be sandboxed
-            # for security using Docker or a similar technology. For this project, it's okay.
-            exec(code, globals())
+        result = output_buffer.getvalue().strip()
+        json_obj = json.loads(result)
 
-            result = output_buffer.getvalue().strip()
-            if not result:
-                raise ValueError("The executed script produced no output. It must end with a print() statement.")
-            return result
+        # enforce plot size limit
+        if isinstance(json_obj, (dict, list)):
+            def check_size(val):
+                if isinstance(val, str) and val.startswith("data:image") and len(val) > 100000:
+                    raise ValueError("Plot exceeds 100kB limit")
+            if isinstance(json_obj, dict):
+                for v in json_obj.values(): check_size(v)
+            elif isinstance(json_obj, list):
+                for v in json_obj: check_size(v)
+
+        return result
     except Exception as e:
         # Log the full error and return a JSON error message
         logging.error(f"Code execution failed: {e}\n{traceback.format_exc()}")
