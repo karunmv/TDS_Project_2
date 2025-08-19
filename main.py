@@ -132,7 +132,7 @@ async def analyze_data(files: List[UploadFile] = File(...)):
     # --- 7. Call the LLM to Generate Code ---
     try:
         response = client.chat.completions.create(
-            model="openai/gpt-4.1-nano",
+            model="gpt-4o", # This is a powerful and widely supported model
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt}
